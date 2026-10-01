@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POI Finder</title>
+</head>
+
+<body>
+  <header class="topbar">
+    <h1>POI Finder</h1>
+    <span id="status" class="status">Ready</span>
+  </header>
+
+  <main class="layout">
+    <div id="viewDiv"></div>
+
+    <aside class="panel">
+      <div id="searchBox"></div>
+      <form id="searchForm" class="search">
+        <div class="search-row">
+          <select id="radius" aria-label="Search radius"></select>
+          <button type="button" id="filterToggle" class="secondary">Filters</button>
+          <button type="submit">Search</button>
+        </div>
+
+        <div id="filterPanel" class="filter-panel" hidden>
+          <fieldset>
+            <legend>Products</legend>
+            <div id="productFilters"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Services</legend>
+            <div id="serviceFilters"></div>
+          </fieldset>
+          <div class="filter-actions">
+            <button type="button" id="applyFilters">Apply</button>
+            <button type="button" id="clearFilters" class="secondary">Clear</button>
+          </div>
+        </div>
+      </form>
+
+      <section id="hint" class="hint">
+        <p>Enter an address to see the points of interest around it.</p>
+      </section>
+
+      <section id="results" hidden>
+        <div class="location" id="matched"></div>
+
+        <div class="cards" id="kpis"></div>
+
+        <!-- <div class="card wide">
+            <h3>By category</h3>
+            <div id="bars"></div>
+          </div> -->
+
+        <div class="card wide">
+          <h3>Nearby places</h3>
+          <ul id="list" class="poi-list"></ul>
+        </div>
+      </section>
+
+      <p class="error" id="error" hidden></p>
+    </aside>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
