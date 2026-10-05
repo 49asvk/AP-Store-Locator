@@ -13,7 +13,7 @@ export const ENTERPRISE_KEY = import.meta.env.VITE_ENTERPRISE_API_KEY || "PASTE_
 
 // The POI feature layer (use the layer URL including /FeatureServer/<n>)
 export const POI_LAYER_URL =
-  "https://solutions.esri.in/server/rest/services/Hosted/AC_Brand_Stores/FeatureServer/0";
+  "https://solutions.esri.in/server/rest/services/Hosted/Store_Points_Synthetic_enriched/FeatureServer/0";
 
 // Field names in the uploaded stores layer (case-sensitive, check the layer's REST page)
 export const FIELDS = {
