@@ -17,11 +17,11 @@ export const POI_LAYER_URL =
 
 // Field names in the uploaded stores layer (case-sensitive, check the layer's REST page)
 export const FIELDS = {
-  name: "Name",
-  products: "Products",
-  services: "Services",
-  phone: "Phone",
-  email: "Email",
+  name: "name",
+  products: "products",
+  services: "services",
+  phone: "phone",
+  email: "email",
 };
 
 // Filter checkbox values (must match the values in the data exactly)
