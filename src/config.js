@@ -5,10 +5,10 @@
 export const API_KEY = import.meta.env.VITE_ARCGIS_API_KEY || "PASTE_API_KEY_HERE";
 
 // ArcGIS Enterprise locator (replaces the World Geocoder)
-export const GEOCODER_URL = "https://examples.esri.in/server/rest/services/Locator/IND/GeocodeServer";
+export const GEOCODER_URL = "https://solutions.esri.in/server/rest/services/Locator/IND/GeocodeServer";
 
 // The enterprise key is only sent to URLs under this address
-export const ENTERPRISE_SERVER = "https://examples.esri.in/server/rest/services";
+export const ENTERPRISE_SERVER = "https://solutions.esri.in/server/rest/services";
 export const ENTERPRISE_KEY = import.meta.env.VITE_ENTERPRISE_API_KEY || "PASTE_ENTERPRISE_KEY_HERE";
 
 // The POI feature layer (use the layer URL including /FeatureServer/<n>)
