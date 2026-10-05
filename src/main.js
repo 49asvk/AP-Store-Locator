@@ -1,6 +1,7 @@
 import "@arcgis/core/assets/esri/themes/light/main.css";
 import "./style.css";
 
+import esriId from "@arcgis/core/identity/IdentityManager";
 import esriConfig from "@arcgis/core/config";
 import ArcGISMap from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
@@ -14,7 +15,8 @@ import Search from "@arcgis/core/widgets/Search";
 import {
   API_KEY,
   GEOCODER_URL,
-  COUNTRY_CODE,
+  ENTERPRISE_SERVER,
+  ENTERPRISE_KEY,
   POI_LAYER_URL,
   FIELDS,
   PRODUCT_OPTIONS,
@@ -26,6 +28,8 @@ import {
 } from "./config.js";
 
 esriConfig.apiKey = API_KEY;
+// Sent only to the enterprise server; esriConfig.apiKey above only covers arcgis.com
+esriId.registerToken({ server: ENTERPRISE_SERVER, token: ENTERPRISE_KEY });
 
 const $ = (id) => document.getElementById(id);
 const fmtInt = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 });
@@ -85,17 +89,17 @@ const search = new Search({
   popupEnabled: false,
   resultGraphicEnabled: false, // we draw our own pin and search area
   suggestionDelay: 300, // ms to wait after typing stops before asking for suggestions
-  sources: [
+    sources: [
     {
       url: GEOCODER_URL,
-      name: "World Geocoder",
+      name: "India Locator",
       placeholder: "Enter an address or place",
-      ...(COUNTRY_CODE ? { countryCode: COUNTRY_CODE } : {}),
-      suggestionsEnabled: true,
+      singleLineFieldName: "SingleLine", // use the name on the locator's REST page
+      suggestionsEnabled: true, // set false if the locator doesn't list Suggest
       minSuggestCharacters: 3,
       maxSuggestions: 6,
       maxResults: 1,
-      outFields: ["Match_addr"],
+      outFields: ["*"],
     },
   ],
 });

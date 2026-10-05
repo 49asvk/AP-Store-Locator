@@ -28,6 +28,7 @@ jobs:
         env:
           # Repo Settings > Secrets and variables > Actions > New repository secret
           VITE_ARCGIS_API_KEY: ${{ secrets.VITE_ARCGIS_API_KEY }}
+          VITE_ENTERPRISE_API_KEY: ${{ secrets.VITE_ENTERPRISE_API_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
