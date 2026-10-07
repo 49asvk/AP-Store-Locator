@@ -4,8 +4,9 @@
 // Needed privileges: "Geocoding (not stored)" and access to the POI layer item.
 export const API_KEY = import.meta.env.VITE_ARCGIS_API_KEY || "PASTE_API_KEY_HERE";
 
-// ArcGIS Enterprise locator (replaces the World Geocoder)
-export const GEOCODER_URL = "https://solutions.esri.in/server/rest/services/Locator/IND/GeocodeServer";
+// World Geocoder (ArcGIS Online): address search and suggestions only
+export const GEOCODER_URL = "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer";
+export const COUNTRY_CODE = "IN"; // narrows matches; set "" to search worldwide
 
 // The enterprise key is only sent to URLs under this address
 export const ENTERPRISE_SERVER = "https://solutions.esri.in/server/rest/services";

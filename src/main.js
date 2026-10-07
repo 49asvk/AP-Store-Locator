@@ -15,6 +15,7 @@ import Search from "@arcgis/core/widgets/Search";
 import {
   API_KEY,
   GEOCODER_URL,
+  COUNTRY_CODE,
   ENTERPRISE_SERVER,
   ENTERPRISE_KEY,
   POI_LAYER_URL,
@@ -89,17 +90,17 @@ const search = new Search({
   popupEnabled: false,
   resultGraphicEnabled: false, // we draw our own pin and search area
   suggestionDelay: 300, // ms to wait after typing stops before asking for suggestions
-    sources: [
+      sources: [
     {
       url: GEOCODER_URL,
-      name: "India Locator",
+      name: "World Geocoder",
       placeholder: "Enter an address or place",
-      singleLineFieldName: "SingleLine", // use the name on the locator's REST page
-      suggestionsEnabled: true, // set false if the locator doesn't list Suggest
+      ...(COUNTRY_CODE ? { countryCode: COUNTRY_CODE } : {}),
+      suggestionsEnabled: true,
       minSuggestCharacters: 3,
       maxSuggestions: 6,
       maxResults: 1,
-      outFields: ["*"],
+      outFields: ["Match_addr"],
     },
   ],
 });
