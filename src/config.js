@@ -9,12 +9,12 @@ export const GEOCODER_URL = "https://geocode-api.arcgis.com/arcgis/rest/services
 export const COUNTRY_CODE = "IN"; // narrows matches; set "" to search worldwide
 
 // The enterprise key is only sent to URLs under this address
-export const ENTERPRISE_SERVER = "https://solutions.esri.in/server/rest/services";
+export const ENTERPRISE_SERVER = "https://apesriserver.asianpaints.com/server/rest/services";
 export const ENTERPRISE_KEY = import.meta.env.VITE_ENTERPRISE_API_KEY || "PASTE_ENTERPRISE_KEY_HERE";
 
 // The POI feature layer (use the layer URL including /FeatureServer/<n>)
 export const POI_LAYER_URL =
-  "https://solutions.esri.in/server/rest/services/Hosted/Store_Points_Synthetic_enriched/FeatureServer/0";
+  "https://apesriserver.asianpaints.com/server/rest/services/Hosted/Store_Location_India/FeatureServer/0";
 
 // Field names in the uploaded stores layer (case-sensitive, check the layer's REST page)
 export const FIELDS = {
