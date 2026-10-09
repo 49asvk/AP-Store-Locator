@@ -96,6 +96,8 @@ body { display: flex; flex-direction: column; }
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
+
+.check-list { max-height: 140px; overflow-y: auto; }
 .check { display: block; font-size: 13px; padding: 2px 0; cursor: pointer; }
 .filter-actions { display: flex; gap: 8px; }
 .filter-actions button { flex: 1; padding: 7px 0; }
@@ -140,7 +142,7 @@ body { display: flex; flex-direction: column; }
 .poi-head:hover { background: #f0f5f9; }
 
 .details { padding: 4px 4px 12px; font-size: 13px; }
-.detail-row { display: grid; grid-template-columns: 70px 1fr; gap: 8px; padding: 2px 0; }
+.detail-row { display: grid; grid-template-columns: 100px 1fr; gap: 8px; padding: 2px 0; }
 .detail-key { color: var(--muted); }
 .btn {
   display: inline-block;

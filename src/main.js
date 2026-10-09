@@ -19,9 +19,9 @@ import {
   ENTERPRISE_SERVER,
   ENTERPRISE_KEY,
   POI_LAYER_URL,
-  FIELDS,
-  PRODUCT_OPTIONS,
-  SERVICE_OPTIONS,
+  NAME_FIELD,
+  DETAIL_FIELDS,
+  FILTERS,
   RADII_M,
   DEFAULT_RADIUS_M,
   START_CENTER,
@@ -90,7 +90,7 @@ const search = new Search({
   popupEnabled: false,
   resultGraphicEnabled: false, // we draw our own pin and search area
   suggestionDelay: 300, // ms to wait after typing stops before asking for suggestions
-      sources: [
+  sources: [
     {
       url: GEOCODER_URL,
       name: "World Geocoder",
@@ -114,39 +114,60 @@ search.on("select-result", (e) => {
 });
 
 // ---------- Filters ----------
-const selected = { products: new Set(), services: new Set() };
+// selected: field -> Set of checked values. Within a group any checked value matches (OR);
+// across groups every group with a selection must match (AND).
+const selected = Object.fromEntries(FILTERS.map((f) => [f.field, new Set()]));
 
-function buildFilterGroup(containerId, options, set) {
-  const box = $(containerId);
-  options.forEach((opt) => {
-    const label = document.createElement("label");
-    label.className = "check";
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.value = opt;
-    cb.onchange = () => (cb.checked ? set.add(opt) : set.delete(opt));
-    label.append(cb, document.createTextNode(" " + opt));
-    box.appendChild(label);
+// Reads the distinct values of each filter field from the layer and builds the checkboxes
+async function buildFilters() {
+  const lists = await Promise.all(
+    FILTERS.map(async ({ field }) => {
+      const q = poiLayer.createQuery();
+      q.where = "1=1";
+      q.outFields = [field];
+      q.returnDistinctValues = true;
+      q.returnGeometry = false;
+      q.orderByFields = [field];
+      const { features } = await poiLayer.queryFeatures(q);
+      return features.map((f) => f.attributes[field]).filter((v) => v !== null && v !== "");
+    })
+  );
+
+  const container = $("filterGroups");
+  FILTERS.forEach(({ label, field }, i) => {
+    const fieldset = document.createElement("fieldset");
+    const legend = document.createElement("legend");
+    legend.textContent = label;
+    const box = document.createElement("div");
+    box.className = "check-list";
+    lists[i].forEach((value) => {
+      const row = document.createElement("label");
+      row.className = "check";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.onchange = () => (cb.checked ? selected[field].add(value) : selected[field].delete(value));
+      row.append(cb, document.createTextNode(" " + value));
+      box.appendChild(row);
+    });
+    fieldset.append(legend, box);
+    container.appendChild(fieldset);
   });
 }
-buildFilterGroup("productFilters", PRODUCT_OPTIONS, selected.products);
-buildFilterGroup("serviceFilters", SERVICE_OPTIONS, selected.services);
+buildFilters().catch((err) => {
+  console.error(err);
+  setError("Could not load the filter options from the layer.");
+});
 
-// Within a group: any checked value matches (OR). Across groups: both must match (AND).
 function buildWhere() {
-  const clauses = [];
-  const group = (field, set) => {
-    if (!set.size) return;
-    const parts = [...set].map((v) => `${field} LIKE '%${v.replace(/'/g, "''")}%'`);
-    clauses.push(`(${parts.join(" OR ")})`);
-  };
-  group(FIELDS.products, selected.products);
-  group(FIELDS.services, selected.services);
+  const lit = (v) => (typeof v === "number" ? String(v) : `'${String(v).replace(/'/g, "''")}'`);
+  const clauses = FILTERS.filter(({ field }) => selected[field].size).map(
+    ({ field }) => `${field} IN (${[...selected[field]].map(lit).join(", ")})`
+  );
   return clauses.length ? clauses.join(" AND ") : "1=1";
 }
 
 function updateFilterButton() {
-  const n = selected.products.size + selected.services.size;
+  const n = FILTERS.reduce((sum, { field }) => sum + selected[field].size, 0);
   $("filterToggle").textContent = n ? `Filters (${n})` : "Filters";
 }
 
@@ -182,19 +203,15 @@ function buildDetails(p) {
   const wrap = document.createElement("div");
   wrap.className = "details";
 
-  [
-    ["Phone", p.phone],
-    ["Email", p.email],
-    ["Products", p.products],
-    ["Services", p.services],
-  ].forEach(([key, value]) => {
+  DETAIL_FIELDS.forEach(([key, field]) => {
+    const value = p.attrs[field];
     const row = document.createElement("div");
     row.className = "detail-row";
     const k = document.createElement("span");
     k.className = "detail-key";
     k.textContent = key;
     const v = document.createElement("span");
-    v.textContent = value || "—";
+    v.textContent = value === null || value === undefined || value === "" ? "—" : value;
     row.append(k, v);
     wrap.appendChild(row);
   });
@@ -313,7 +330,7 @@ function renderList(pois) {
       body.hidden = !body.hidden;
       openBody = body.hidden ? null : body;
       if (!body.hidden) {
-        view.goTo({ target: p.geometry, zoom: 17 }, { duration: 500 }).catch(() => {});
+        view.goTo({ target: p.geometry, zoom: 17 }, { duration: 500 }).catch(() => { });
       }
     };
     list.appendChild(li);
@@ -327,14 +344,10 @@ async function showResults(zoom) {
 
   const pois = features
     .map((f) => {
-      const a = f.attributes;
       return {
         geometry: f.geometry,
-        name: a[FIELDS.name],
-        phone: a[FIELDS.phone],
-        email: a[FIELDS.email],
-        products: a[FIELDS.products],
-        services: a[FIELDS.services],
+        attrs: f.attributes,
+        name: f.attributes[NAME_FIELD],
         dist: haversineM(point.longitude, point.latitude, f.geometry.longitude, f.geometry.latitude),
       };
     })
@@ -349,7 +362,7 @@ async function showResults(zoom) {
   renderKpis(pois);
   renderList(pois);
 
-  if (zoom) await view.goTo(ring.extent.expand(1.3), { duration: 600 }).catch(() => {});
+  if (zoom) await view.goTo(ring.extent.expand(1.3), { duration: 600 }).catch(() => { });
 }
 
 // Wraps a search/filter action with the status text, error box and disabled buttons
@@ -391,8 +404,7 @@ $("applyFilters").onclick = () => {
 };
 
 $("clearFilters").onclick = () => {
-  selected.products.clear();
-  selected.services.clear();
+  Object.values(selected).forEach((set) => set.clear());
   document.querySelectorAll("#filterPanel input[type=checkbox]").forEach((cb) => (cb.checked = false));
   updateFilterButton();
   if (lastSearch) run(() => showResults(false));

@@ -16,23 +16,30 @@ export const ENTERPRISE_KEY = import.meta.env.VITE_ENTERPRISE_API_KEY || "PASTE_
 export const POI_LAYER_URL =
   "https://apesriserver.asianpaints.com/server/rest/services/Hosted/Store_Location_India/FeatureServer/0";
 
-// Field names in the uploaded stores layer (case-sensitive, check the layer's REST page)
-export const FIELDS = {
-  name: "name",
-  products: "products",
-  services: "services",
-  phone: "phone",
-  email: "email",
-};
+// Store title in the sidebar and popup
+export const NAME_FIELD = "pcc_name";
 
-// Filter checkbox values (must match the values in the data exactly)
-export const PRODUCT_OPTIONS = ["Paints", "Stencils", "Wall Textures", "Waterproofing", "Wood Finishes"];
-export const SERVICE_OPTIONS = [
-  "4 pics service",
-  "Color visualization",
-  "Digital visualization",
-  "Machine tinting",
-  "Safe painting service",
+// Shown in the sidebar and map popup, in this order: [label, field]
+export const DETAIL_FIELDS = [
+  ["Division", "division"],
+  ["Region", "region"],
+  ["State", "name"],
+  ["Retail format", "retailformat"],
+  ["PCC", "pcc"],
+  ["CC", "cc"],
+  ["Tier PCC", "tier_pcc"],
+  ["Tier CC", "tier_cc"],
+  ["TY", "ty"],
+];
+
+// Filter groups. The checkbox values are read from the layer itself.
+export const FILTERS = [
+  { label: "Division", field: "division" },
+  { label: "Region", field: "region" },
+  { label: "State", field: "name" },
+  { label: "Retail format", field: "retailformat" },
+  { label: "Tier PCC", field: "tier_pcc" },
+  { label: "Tier CC", field: "tier_cc" },
 ];
 
 // Search radii in metres
